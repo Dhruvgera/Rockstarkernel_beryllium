@@ -1534,7 +1534,7 @@ config DYNAMIC_STUNE_BOOST
 	  activate and reset SchedTune boosting from anywhere in the kernel.
 
 config CPUSET_ASSIST
-	bool "CPUSet configuration helper"
+	bool "Cpuset configuration helper"
 	depends on CPUSETS
 	depends on ANDROID
 	help
