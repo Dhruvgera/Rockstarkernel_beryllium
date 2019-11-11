@@ -9,7 +9,7 @@ export TZ="Asia/Kolkata";
 mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
 git clone git://github.com/RaphielGang/aarch64-linux-gnu-8.x $HOME/TC/aarch64-linux-gnu-8.x --depth=1
-git clone git://github.com/VRanger/dragontc 
+git clone https://github.com/VRanger/clang.git dragontc
 git clone -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ "$HOME"/TC/gcc32 --depth=1 
 function check_toolchain() {
  
@@ -79,7 +79,7 @@ export TOOLCHAIN="$HOME/TC/aarch64-linux-gnu-8.x";
 export DEFCONFIG="beryllium_defconfig";
 export ZIP_DIR="${HOME}/${KERNELDIR}/files";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz";
-export CHAT_ID="-1001344943713";
+export CHAT_ID="569291499";
 export CC=$HOME/dragontc/bin/clang
 export CLANG_VERSION=$($CC --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export CLANG_TRIPLE=aarch64-linux-gnu-
@@ -206,7 +206,7 @@ fi
 # Make ZIP using AnyKernel
 # ================
 echo -e "Copying kernel image";
-cp -v "${IMAGE}" "${ANYKERNEL}/kernel/Image.gz";
+cp -v "${IMAGE}" "${ANYKERNEL}/";
 cd -;
 cd ${ANYKERNEL};
 zip -r9 ${FINAL_ZIP} *;
