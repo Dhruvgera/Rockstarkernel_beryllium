@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 export KERNELDIR="$PWD" 
+export USE_CCACHE=1
+prebuilts/misc/linux-x86/ccache/ccache -M 20G
+export CCACHE_COMPRESS=1
 git config --global user.email "dhruvgera61@gmail.com"
 git config --global user.name "Dhruv"
  
