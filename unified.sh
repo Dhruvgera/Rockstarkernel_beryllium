@@ -119,7 +119,7 @@ if [ -n "$USE_CLANG" ]
 then
   export ZIPNAME="${KERNELNAME}-Clang-${MAKE_TYPE}$(date +%m%d-%H).zip"
 else
-  export ZIPNAME="${KERNELNAME}-${MAKE_TYPE}$(date +%m%d-%H).zip"
+  export ZIPNAME="${KERNELNAME}-POCOPHONE-${MAKE_TYPE}$(date +%m%d-%H).zip"
 fi
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
  
