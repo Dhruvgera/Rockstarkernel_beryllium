@@ -220,8 +220,6 @@ cd -;
 if [ -f "$FINAL_ZIP" ];
 then
   if [[ ${success} == true ]]; then
-      echo -e "Uploading ${ZIPNAME} to https://transfer.sh/";
-      transfer "${FINAL_ZIP}";
    
  
 message="CI build of Rockstar Kernel completed with the latest commit."
