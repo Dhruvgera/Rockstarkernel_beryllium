@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 export KERNELDIR="$PWD" 
 export USE_CCACHE=1
-prebuilts/misc/linux-x86/ccache/ccache -M 20G
-export CCACHE_COMPRESS=1
+export CCACHE_DIR="$HOME/.ccache"
 git config --global user.email "dhruvgera61@gmail.com"
 git config --global user.name "Dhruv"
  
@@ -11,23 +10,7 @@ export TZ="Asia/Kolkata";
 # Kernel compiling script
 mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
-git clone git://github.com/RaphielGang/aarch64-linux-gnu-8.x $HOME/TC/aarch64-linux-gnu-8.x --depth=1
-git clone https://github.com/VRanger/clang.git dragontc
-git clone -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ "$HOME"/TC/gcc32 --depth=1 
-function check_toolchain() {
- 
-    export TC="$(find ${TOOLCHAIN}/bin -type f -name *-gcc)";
- 
-    if [[ -f "${TC}" ]]; then
-        export CROSS_COMPILE="${TOOLCHAIN}/bin/$(echo ${TC} | awk -F '/' '{print $NF'} |\
-sed -e 's/gcc//')";
-        echo -e "Using toolchain: $(${CROSS_COMPILE}gcc --version | head -1)";
-    else
-        echo -e "No suitable toolchain found in ${TOOLCHAIN}";
-        exit 1;
-    fi
-}
- 
+git clone https://github.com/kdrag0n/proton-clang.git prebuilts/proton-clang --depth=1 
  
 function sendlog {
     # var=$(php -r "echo file_get_contents('$1');")
@@ -74,32 +57,15 @@ export OUTDIR="${KERNELDIR}/out";
 export ANYKERNEL="${KERNELDIR}/AnyKernel3";
 export AROMA="${KERNELDIR}/aroma/";
 export ARCH="arm64";
-export CROSS_COMPILE_ARM32="$HOME/TC/gcc32/bin/arm-linux-androideabi-"
 export SUBARCH="arm64";
+export KBUILD_COMPILER_STRING="$($KERNELDIR/prebuilts/proton-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 export KBUILD_BUILD_USER="Dhruv"
 export KBUILD_BUILD_HOST="TeamRockstar"
-export TOOLCHAIN="$HOME/TC/aarch64-linux-gnu-8.x";
+export PATH="$KERNELDIR/prebuilts/proton-clang/bin:${PATH}"
 export DEFCONFIG="beryllium_defconfig";
-export ZIP_DIR="${HOME}/${KERNELDIR}/files";
+export ZIP_DIR="${KERNELDIR}/files";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz";
-export CHAT_ID="569291499";
-export CC=$HOME/dragontc/bin/clang
-export CLANG_VERSION=$($CC --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-export CLANG_TRIPLE=aarch64-linux-gnu-
-export CLANG_LD_PATH=$HOME/dragontc
-export LLVM_DIS=$HOME/clang/bin/llvm-dis
-export CROSS_COMPILE=$HOME/TC/aarch64-linux-gnu-8.x
-#  Clang
-if [[ "$*" == *"-clang"* ]]
-then
-  USE_CLANG=1
-export CC=$HOME/toolchains/dragontc/bin/clang
-export CLANG_VERSION=$($CC --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-export CLANG_TRIPLE=aarch64-linux-gnu-
-export CLANG_LD_PATH=$HOME/toolchains/dragontc
-export LLVM_DIS=$HOME/clang/bin/llvm-dis
 
-fi
  
 export MAKE_TYPE="Treble"
  
@@ -108,19 +74,7 @@ if [[ -z "${JOBS}" ]]; then
 fi
  
 export MAKE="make O=${OUTDIR}";
-check_toolchain;
- 
-export TCVERSION1="$(${CROSS_COMPILE}gcc --version | head -1 |\
-awk -F '(' '{print $2}' | awk '{print tolower($1)}')"
-export TCVERSION2="$(${CROSS_COMPILE}gcc --version | head -1 |\
-awk -F ')' '{print $2}' | awk '{print tolower($1)}')"
- 
-if [ -n "$USE_CLANG" ]
-then
-  export ZIPNAME="${KERNELNAME}-Clang-${MAKE_TYPE}$(date +%m%d-%H).zip"
-else
-  export ZIPNAME="${KERNELNAME}-POCOPHONE-${MAKE_TYPE}$(date +%m%d-%H).zip"
-fi
+export ZIPNAME="${KERNELNAME}-POCOPHONE-${MAKE_TYPE}$(date +%m%d-%H).zip"
 export FINAL_ZIP="${ZIP_DIR}/${ZIPNAME}"
  
 [ ! -d "${ZIP_DIR}" ] && mkdir -pv ${ZIP_DIR}
@@ -134,11 +88,11 @@ MAKE_STATEMENT=make
 # Menuconfig configuration
 # ================
 # If -no-menuconfig flag is present we will skip the kernel configuration step.
-# Make operation will use santoni_defconfig directly.
+# Make operation will use beryllium_defconfig directly.
 if [[ "$*" == *"-no-menuconfig"* ]]
 then
   NO_MENUCONFIG=1
-  MAKE_STATEMENT="$MAKE_STATEMENT KCONFIG_CONFIG=./arch/arm64/configs/santoni_defconfig"
+  MAKE_STATEMENT="$MAKE_STATEMENT KCONFIG_CONFIG=./arch/arm64/configs/beryllium_defconfig"
 fi
  
 if [[ "$@" =~ "mrproper" ]]; then
@@ -161,32 +115,10 @@ ${MAKE} $DEFCONFIG;
 START=$(date +"%s");
 echo -e "Using ${JOBS} threads to compile"
  
-# Check for Clang
+# Start the build
 # ================
-if [ -n "$USE_CLANG" ]
-then
- export KCFLAGS="-mllvm -polly -mllvm -polly-run-dce -mllvm -polly-run-inliner -mllvm -polly-opt-fusion=max -mllvm -polly-ast-use-context -mllvm -polly-vectorizer=stripmine -mllvm -polly-detect-keep-going -Wasm-operand-widths -Werror=duplicate-decl-specifier -Werror=stringop-overflow= -Werror=misleading-indentation  -Wsometimes-uninitialized"
-make clean
-sudo apt-install bc
+${MAKE} -j${JOBS} \ ARCH=arm64 \ CC=clang  \ CROSS_COMPILE=aarch64-linux-gnu- \ CROSS_COMPILE_ARM32=arm-linux-gnueabi- \ NM=llvm-nm \ OBJCOPY=llvm-objcopy \ OBJDUMP=llvm-objdump \ STRIP=llvm-strip  | tee build-log.txt ;
 
-make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
-			CROSS_COMPILE=$BUILD_CROSS_COMPILE \
-			$KERNEL_DEFCONFIG | grep :
-
-	echo "compiling..."
-	
-	export KBUILD_COMPILER_STRING=$($HOME/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/ */ /g' -e 's/[[:space:]]*$//') && make O=out ARCH=arm64 santoni_defconfig 
-make -j$(nproc --all) O=out \ 
-	              ARCH=arm64\
-	              CC="$HOME/bin/clang" \ 
-	              CLANG_TRIPLE=aarch64-linux-gnu- \ 
-	              CROSS_COMPILE="$HOME/TC/aarch64-linux-gnu-8.x/bin/aarch64-linux-gnu-"\ 
-	              KCFLAGS="$KCFLAGS" | tee build-log.txt ;
-
-else
-  ${MAKE} -j${JOBS} \ ARCH=arm64 \ CC=$PWD/dragontc/bin/clang \ CLANG_TRIPLE=aarch64-linux-gnu- \ CROSS_COMPILE="$HOME/TC/aarch64-linux-gnu-8.x/bin/aarch64-linux-gnu-";
-
-fi
  
  
 exitCode="$?";
