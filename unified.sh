@@ -65,7 +65,7 @@ export PATH="$KERNELDIR/prebuilts/proton-clang/bin:${PATH}"
 export DEFCONFIG="beryllium_defconfig";
 export ZIP_DIR="${KERNELDIR}/files";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz";
-
+export COMMITMSG=$(git log -1 --pretty=%B)
  
 export MAKE_TYPE="Treble"
  
@@ -176,6 +176,7 @@ curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="
 
 🗒️ Zip-Name   : $ZIPNAME
 
+Commit message : $COMMITMSG
 "  -d chat_id=$CHAT_ID
 # curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendSticker -d sticker="CAADBQADFQADIIRIEhVlVOIt6EkuAgc"  -d chat_id=$CHAT_ID
 # curl -F document=@$url caption="Latest Build." https://api.telegram.org/bot$BOT_API_KEY/sendDocument -d chat_id=$CHAT_ID
