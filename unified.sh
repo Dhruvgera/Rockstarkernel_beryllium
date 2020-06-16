@@ -12,8 +12,8 @@ mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
 git clone https://github.com/kdrag0n/proton-clang.git prebuilts/proton-clang --depth=1 
  
+# Upload log to del.dog
 function sendlog {
-    # var=$(php -r "echo file_get_contents('$1');")
     var="$(cat $1)"
     content=$(curl -sf --data-binary "$var" https://del.dog/documents)
     file=$(jq -r .key <<< $content)
@@ -22,12 +22,14 @@ function sendlog {
     curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="Build failed, "$1" "$log" :3" -d chat_id=$CHAT_ID
 }
  
+# Trim the log if build fails
 function trimlog {
     sendlog "$1"
-    grep -iE 'crash|error|fail|fatal' "$1" &> "trimmed$1"
-    sendlog "trimmed_$1"
+    grep -iE 'crash|error|fail|fatal' "$1" &> "trimmed-$1"
+    sendlog "trimmed-$1"
 }
  
+# Unused function, can be used to upload builds to transfer.sh
 function transfer() {
     zipname="$(echo $1 | awk -F '/' '{print $NF}')";
     url="$(curl -# -T $1 https://transfer.sh)";
@@ -42,10 +44,6 @@ if [[ -z ${KERNELDIR} ]]; then
     exit 1;
 fi
  
-export DEVICE=$1;
-if [[ -z ${DEVICE} ]]; then
-    export DEVICE="HM4X";
-fi
  
 mkdir -p ${KERNELDIR}/aroma
 mkdir -p ${KERNELDIR}/files
@@ -147,7 +145,7 @@ cd ${ANYKERNEL};
 zip -r9 ${FINAL_ZIP} *;
 cd -;
  
-# Push to transfer.sh if successful
+# Push to Telegram if successful
 # ================
 if [ -f "$FINAL_ZIP" ];
 then
@@ -158,25 +156,23 @@ message="CI build of Rockstar Kernel completed with the latest commit."
 
 time="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 
-#curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="$(git log --pretty=format:'%h : %s' -5)" -d chat_id=$CHAT_ID
-
 curl -F chat_id="$CHAT_ID" -F document=@"${ZIP_DIR}/$ZIPNAME" -F caption="$message $time" https://api.telegram.org/bot$BOT_API_KEY/sendDocument
 
 curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="
 
 ♔♔♔♔♔♔♔BUILD-DETAILS♔♔♔♔♔♔♔
 
-🖋️ Author     : DhruvGera
+🖋️ <b>Author</b>     : <code>Dhruv Gera</code>
 
-🛠️ Make-Type  : $MAKE_TYPE
+🛠️ <b>Make-Type</b>  : <code>$MAKE_TYPE</code>
 
-🗒️ Buld-Type  : TEST
+🗒️ <b>Build-Type</b>  : <code>TEST</code>
 
-⌚ Build-Time : $time
+⌚ <b>Build-Time</b> : <code>$time</code>
 
-🗒️ Zip-Name   : $ZIPNAME
+🗒️ <b>Zip-Name</b>   : <code>$ZIPNAME</code>
 
-🤖 Commit message : <code>$COMMITMSG</code>
+🤖 <b>Commit message</b> : <code>$COMMITMSG</code>
 "  -d chat_id=$CHAT_ID -d "parse_mode=html"
 # curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendSticker -d sticker="CAADBQADFQADIIRIEhVlVOIt6EkuAgc"  -d chat_id=$CHAT_ID
 # curl -F document=@$url caption="Latest Build." https://api.telegram.org/bot$BOT_API_KEY/sendDocument -d chat_id=$CHAT_ID
@@ -186,4 +182,4 @@ fi
 else
 echo -e "Zip Creation Failed  ";
 fi
-rm -rf build-log.txt files/ trimmedbuild-log.txt
+rm -rf build-log.txt files/ trimmed-build-log.txt
