@@ -123,3 +123,7 @@ kernel/configs/android-*.cfg
 #Ignoring Android.bp link file
 #
 Android.bp
+
+# Other cloned directories
+AnyKernel3
+prebuilts
