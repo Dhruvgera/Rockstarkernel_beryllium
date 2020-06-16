@@ -177,7 +177,7 @@ curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="
 🗒️ Zip-Name   : $ZIPNAME
 
 🤖 Commit message : <code>$COMMITMSG</code>
-"  -d chat_id=$CHAT_ID
+"  -d chat_id=$CHAT_ID -d "parse_mode=html"
 # curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendSticker -d sticker="CAADBQADFQADIIRIEhVlVOIt6EkuAgc"  -d chat_id=$CHAT_ID
 # curl -F document=@$url caption="Latest Build." https://api.telegram.org/bot$BOT_API_KEY/sendDocument -d chat_id=$CHAT_ID
  
@@ -186,3 +186,4 @@ fi
 else
 echo -e "Zip Creation Failed  ";
 fi
+rm -rf build-log.txt files/ trimmedbuild-log.txt
