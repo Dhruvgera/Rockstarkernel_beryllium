@@ -2,6 +2,8 @@
 
 ![Rockstar Kernel](rrk.png)
 
+
+## Current build status
 [![Build Status](https://semaphoreci.com/api/v1/dhruvgera61/rockstarkernel_beryllium/branches/master/badge.svg)](https://semaphoreci.com/dhruvgera61/rockstarkernel_beryllium)
 
 ## Features
