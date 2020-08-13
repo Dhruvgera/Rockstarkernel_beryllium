@@ -12,20 +12,17 @@ mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
 git clone https://github.com/kdrag0n/proton-clang.git prebuilts/proton-clang --depth=1 
  
-# Upload log to del.dog
+# Upload log to termbin
 function sendlog {
-    var="$(cat $1)"
-    content=$(curl -sf --data-binary "$var" https://del.dog/documents)
-    file=$(jq -r .key <<< $content)
-    log="https://del.dog/$file"
-    echo "URL is: "$log" "
-    curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="Build failed, "$1" "$log" :3" -d chat_id=$CHAT_ID
+    uploadlog=$(cat $1 | nc termbin.com 9999) # Make sure you have netcat installed
+    echo "URL is: "$uploadlog" "
+    curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="Build failed, "$1" "$uploadlog" :3" -d chat_id=$CHAT_ID
 }
  
 # Trim the log if build fails
 function trimlog {
     sendlog "$1"
-    grep -iE 'crash|error|fail|fatal' "$1" &> "trimmed-$1"
+    grep -iE 'crash|error|fail|fatal|warning' "$1" &> "trimmed-$1"
     sendlog "trimmed-$1"
 }
  
@@ -49,7 +46,6 @@ mkdir -p ${KERNELDIR}/aroma
 mkdir -p ${KERNELDIR}/files
 
 export KERNELNAME="RockstarKernel" 
-export BUILD_CROSS_COMPILE="$HOME/TC/aarch64-linux-gnu-8.x/bin/aarch64-linux-gnu-"
 export SRCDIR="${KERNELDIR}";
 export OUTDIR="${KERNELDIR}/out";
 export ANYKERNEL="${KERNELDIR}/AnyKernel3";
