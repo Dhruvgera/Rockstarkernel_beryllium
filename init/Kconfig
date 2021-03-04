@@ -1525,6 +1525,15 @@ config SCHED_TUNE
 	  boost value is applied to all (CFS) tasks in the system.
 
 	  If unsure, say N.
+	  
+config UCLAMP_ASSIST
+	bool "Uclamp configuration helper"
+	depends on CPUSETS
+	depends on ANDROID
+	depends on UCLAMP_TASK_GROUP
+	depends on CPUSET_ASSIST
+	help
+	  This option enables in-kernel overrides for uclamp values.
 
 config DYNAMIC_STUNE_BOOST
 	bool "Dynamic SchedTune boosting support"
@@ -1533,6 +1542,8 @@ config DYNAMIC_STUNE_BOOST
 	  This option extends the SchedTune framework and provides APIs to
 	  activate and reset SchedTune boosting from anywhere in the kernel.
 
+	  If unsure, say N.
+	  
 config CPUSET_ASSIST
 	bool "Cpuset configuration helper"
 	depends on CPUSETS
