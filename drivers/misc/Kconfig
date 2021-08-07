@@ -4,6 +4,12 @@
 
 menu "Misc devices"
 
+config FORCE_FAST_CHARGE
+	bool "Force faster charge rate for USB"
+	default y
+	help
+	  This allows users to override default charge rate for USB
+
 config SENSORS_LIS3LV02D
 	tristate
 	depends on INPUT
