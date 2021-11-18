@@ -3936,7 +3936,7 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int ioctl_num,
 	} i;
 	void *param = (char *)ioctl_param;
 	struct fastrpc_file *fl = (struct fastrpc_file *)file->private_data;
-	int size = 0, err = 0;
+	int size = 0, err = 0, req_complete = 0;
 	uint32_t info;
 
 	VERIFY(err, fl != NULL);
@@ -4138,6 +4138,11 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int ioctl_num,
 		VERIFY(err, 0 == (err = fastrpc_init_process(fl, &p.init)));
 		if (err)
 			goto bail;
+		if ((fl->cid == CDSP_DOMAIN_ID) && !isQueryDone) {
+			req_complete = fastrpc_update_cdsp_support(fl);
+			if (!req_complete)
+				isQueryDone = true;
+		}
 		break;
 	case FASTRPC_IOCTL_GET_DSP_INFO:
 		err = fastrpc_get_dsp_info(&p.dsp_cap, param, fl);
