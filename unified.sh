@@ -10,8 +10,9 @@ export TZ="Asia/Kolkata";
 # Kernel compiling script
 mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
-git clone https://github.com/kdrag0n/proton-clang.git prebuilts/proton-clang --depth=1 
- 
+git clone https://github.com/mvaisakh/gcc-arm64.git prebuilts/eva-gcc --depth=1 
+git clone https://github.com/mvaisakh/gcc-arm.git prebuilts/eva-gcc32 --depth=1
+
 # Upload log to termbin
 function sendlog {
     uploadlog=$(cat $1 | nc termbin.com 9999) # Make sure you have netcat installed
@@ -52,10 +53,11 @@ export ANYKERNEL="${KERNELDIR}/AnyKernel3";
 export AROMA="${KERNELDIR}/aroma/";
 export ARCH="arm64";
 export SUBARCH="arm64";
-export KBUILD_COMPILER_STRING="$($KERNELDIR/prebuilts/proton-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+export KBUILD_COMPILER_STRING=$("$KERNELDIR/prebuilts/eva-gcc"/bin/aarch64-elf-gcc --version | head -n 1)
 export KBUILD_BUILD_USER="Dhruv"
 export KBUILD_BUILD_HOST="TeamRockstar"
-export PATH="$KERNELDIR/prebuilts/proton-clang/bin:${PATH}"
+export PATH="$KERNELDIR/prebuilts/eva-gcc/bin:${PATH}"
+export COMPILER32="$KERNELDIR/prebuilts/eva-gcc32/bin"
 export DEFCONFIG="beryllium_defconfig";
 export ZIP_DIR="${KERNELDIR}/files";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
@@ -111,7 +113,7 @@ echo -e "Using ${JOBS} threads to compile"
  
 # Start the build
 # ================
-${MAKE} -j${JOBS} \ ARCH=arm64 \ CC=clang \ LINKER="lld" \ CROSS_COMPILE=aarch64-linux-gnu- \ CROSS_COMPILE_ARM32=arm-linux-gnueabi- \ NM=llvm-nm \ OBJCOPY=llvm-objcopy \ OBJDUMP=llvm-objdump \ STRIP=llvm-strip  | tee build-log.txt ;
+${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=aarch64-elf- \ CROSS_COMPILE_ARM32="$COMPILER32"/arm-eabi-   | tee build-log.txt ;
 
  
  
