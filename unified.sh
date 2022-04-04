@@ -33,8 +33,8 @@ function transfer() {
     url="$(curl -# -T $1 https://dgmirror.in)";
     printf '\n';
     echo -e "Download ${zipname} at ${url}";
-    curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="$url" -d chat_id=$CHAT_ID
-    curl -F chat_id="$CHAT_ID" -F document=@"${ZIP_DIR}/$ZIPNAME" https://api.telegram.org/bot$BOT_API_KEY/sendDocument
+    curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="Alternative download link: $url" -d chat_id=$CHAT_ID
+
 }
  
 if [[ -z ${KERNELDIR} ]]; then
