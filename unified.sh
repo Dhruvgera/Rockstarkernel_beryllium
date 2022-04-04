@@ -27,10 +27,10 @@ function trimlog {
     sendlog "trimmed-$1"
 }
  
-# Unused function, can be used to upload builds to transfer.sh
+# Upload builds to dgmirror.in
 function transfer() {
     zipname="$(echo $1 | awk -F '/' '{print $NF}')";
-    url="$(curl -# -T $1 https://transfer.sh)";
+    url="$(curl -# -T $1 https://dgmirror.in)";
     printf '\n';
     echo -e "Download ${zipname} at ${url}";
     curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="$url" -d chat_id=$CHAT_ID
@@ -148,6 +148,8 @@ cd -;
 if [ -f "$FINAL_ZIP" ];
 then
   if [[ ${success} == true ]]; then
+      echo -e "Uploading ${ZIPNAME} to https://dgmirror.in/";
+      transfer "${FINAL_ZIP}";
    
  
 message="CI build of Rockstar Kernel completed with the latest commit."
