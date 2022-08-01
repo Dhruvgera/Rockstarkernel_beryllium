@@ -1,0 +1,12 @@
+kind: pipeline
+name: kernel
+clone:
+  depth: 1
+steps:
+- name: setup
+  image: jebaitedneko/kernel:latest
+  environment:
+    KEY:
+      from_secret: BOT_API_KEY
+  commands:
+    - "cd /drone/src && chmod a+x unified.sh && ./unified.sh $KEY"
