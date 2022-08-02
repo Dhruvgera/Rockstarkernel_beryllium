@@ -4,7 +4,7 @@
 
 
 ## Current build status
-[![Build Status](https://semaphoreci.com/api/v1/dhruvgera61/rockstarkernel_beryllium/branches/master/badge.svg)](https://semaphoreci.com/dhruvgera61/rockstarkernel_beryllium)
+[![Build Status](https://cloud.drone.io/api/badges/Dhruvgera/Rockstarkernel_beryllium/status.svg?ref=refs/heads/master)](https://cloud.drone.io/Dhruvgera/Rockstarkernel_beryllium)
 
 ## Features
 - Based on Android Linux Stable, so everything is always up to date
