@@ -4,7 +4,8 @@ export USE_CCACHE=1
 export CCACHE_DIR="$HOME/.ccache"
 git config --global user.email "dhruvgera61@gmail.com"
 git config --global user.name "Dhruv"
- 
+git revert -n 4389b79e657338130302bea6ffdc0ee13683a495
+
 export TZ="Asia/Kolkata";
  
 # Kernel compiling script
@@ -61,7 +62,7 @@ export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
 export COMMITMSG=$(git log --oneline -1)
 export BOT_API_KEY=$1
 export CHAT_ID=-1001493452651
-export MAKE_TYPE="SE"
+export MAKE_TYPE="NSE"
  
 if [[ -z "${JOBS}" ]]; then
     export JOBS="$(nproc --all)";
@@ -179,4 +180,3 @@ else
 echo -e "Zip Creation Failed  ";
 fi
 rm -rf build-log.txt files/ trimmed-build-log.txt
-chmod a+x unified-nse.sh && ./unified-nse.sh $BOT_API_KEY clean
