@@ -111,7 +111,7 @@ echo -e "Using ${JOBS} threads to compile"
  
 # Start the build
 # ================
-${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=/usr/gcc64/aarch64-elf- \ CROSS_COMPILE_ARM32=/usr/gcc32/arm-eabi-   | tee build-log.txt ;
+${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=/usr/gcc64/bin/aarch64-elf- \ CROSS_COMPILE_ARM32=/usr/gcc32/bin/arm-eabi-   | tee build-log.txt ;
 
  
  
