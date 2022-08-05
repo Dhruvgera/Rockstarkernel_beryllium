@@ -111,7 +111,7 @@ echo -e "Using ${JOBS} threads to compile"
  
 # Start the build
 # ================
-${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=aarch64-linux-gnu- \ CROSS_COMPILE_ARM32=arm-linux-gnueabi-   | tee build-log.txt ;
+${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=/usr/gcc64/aarch64-elf- \ CROSS_COMPILE_ARM32=/usr/gcc32/arm-eabi-   | tee build-log.txt ;
 
  
  
@@ -179,4 +179,4 @@ else
 echo -e "Zip Creation Failed  ";
 fi
 rm -rf build-log.txt files/ trimmed-build-log.txt
-chmod a+x unified-nse.sh && ./unified-nse.sh $BOT_API_KEY clean
+# chmod a+x unified-nse.sh && ./unified-nse.sh $BOT_API_KEY clean
