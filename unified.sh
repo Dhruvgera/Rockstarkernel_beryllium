@@ -10,6 +10,8 @@ export TZ="Asia/Kolkata";
 # Kernel compiling script
 mkdir -p $HOME/TC
 git clone https://github.com/Dhruvgera/AnyKernel3.git 
+git clone https://github.com/Dhruvgera/EvaGCC-arm64 prebuilts/eva-gcc --depth=1
+git clone https://github.com/Dhruvgera/EvaGCC-arm prebuilts/eva-gcc32 --depth=1
 
 # Upload log to termbin
 function sendlog {
@@ -60,8 +62,8 @@ export ZIP_DIR="${KERNELDIR}/files";
 export IMAGE="${OUTDIR}/arch/${ARCH}/boot/Image.gz-dtb";
 export COMMITMSG=$(git log --oneline -1)
 export BOT_API_KEY=$1
-export CHAT_ID=-1001493452651
-export MAKE_TYPE="SE"
+export CHAT_ID=569291499
+export MAKE_TYPE="NSE"
  
 if [[ -z "${JOBS}" ]]; then
     export JOBS="$(nproc --all)";
@@ -111,7 +113,7 @@ echo -e "Using ${JOBS} threads to compile"
  
 # Start the build
 # ================
-${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=/usr/gcc64/bin/aarch64-elf- \ CROSS_COMPILE_ARM32=/usr/gcc32/bin/arm-eabi-   | tee build-log.txt ;
+${MAKE} -j${JOBS} \ ARCH=arm64 \ CROSS_COMPILE=aarch64-elf- \ CROSS_COMPILE_ARM32="$COMPILER32"/arm-eabi-   | tee build-log.txt ;
 
  
  
