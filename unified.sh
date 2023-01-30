@@ -27,10 +27,10 @@ function trimlog {
     sendlog "trimmed-$1"
 }
  
-# Upload builds to dgmirror.in
+# Upload builds to dgcloud.app
 function transfer() {
     zipname="$(echo $1 | awk -F '/' '{print $NF}')";
-    url="$(curl -# -T $1 https://dgmirror.in)";
+    url="$(curl -# -T $1 https://dgcloud.app)";
     printf '\n';
     echo -e "Download ${zipname} at ${url}";
     curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d text="Alternative download link: $url" -d chat_id=$CHAT_ID
@@ -148,7 +148,7 @@ cd -;
 if [ -f "$FINAL_ZIP" ];
 then
   if [[ ${success} == true ]]; then
-      echo -e "Uploading ${ZIPNAME} to https://dgmirror.in/";
+      echo -e "Uploading ${ZIPNAME} to https://dgcloud.app/";
       transfer "${FINAL_ZIP}";
    
  
