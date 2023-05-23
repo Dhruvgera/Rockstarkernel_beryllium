@@ -936,7 +936,7 @@ struct rndis_params *rndis_register(void (*resp_avail)(void *v), void *v,
 	}
 #endif
 
-	spin_lock_init(&params->resp_lock);
+	spin_lock_init(&params->lock);
 	params->confignr = i;
 	params->used = 1;
 	params->state = RNDIS_UNINITIALIZED;
@@ -1130,7 +1130,7 @@ u8 *rndis_get_next_response(struct rndis_params *params, u32 *length)
 			return r->buf;
 		}
 	}
-	spin_unlock_irqrestore(&params->resp_lock, flags);
+	spin_unlock_irqrestore(&params->lock, flags);
 
 	return NULL;
 }
